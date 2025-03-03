@@ -36,6 +36,8 @@ PDS_HANDLE_RESOLVER=${PDS_HANDLE_RESOLVER:-https://handle.bsky.network}
 PDS_INVITE_REQUIRED=${PDS_INVITE_REQUIRED:-true}
 PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL:-}
 PDS_EMAIL_FROM_ADDRESS=${PDS_EMAIL_FROM_ADDRESS:-}
+PDS_PLC_ROTATION_KEY_PATH=/pds/config/plc-rotation-key.json
+PDS_SERVER_DID_KEY_PATH=/pds/config/server-key.json
 LOG_LEVEL=${LOG_LEVEL:-info}
 EOF
 
@@ -48,6 +50,10 @@ EOF
   echo "Environment file contents:"
   cat /pds/pds.env || echo "Failed to read environment file"
 fi
+
+# Run the key generation script
+echo "Running pds key generation script..."
+node /app/scripts/generate-keys.js
 
 # Export environment variables directly
 export PDS_HOSTNAME=${PDS_HOSTNAME}
@@ -63,6 +69,8 @@ export PDS_HANDLE_RESOLVER=${PDS_HANDLE_RESOLVER:-https://handle.bsky.network}
 export PDS_INVITE_REQUIRED=${PDS_INVITE_REQUIRED:-true}
 export PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL:-}
 export PDS_EMAIL_FROM_ADDRESS=${PDS_EMAIL_FROM_ADDRESS:-}
+export PDS_PLC_ROTATION_KEY_PATH=/pds/config/plc-rotation-key.json
+export PDS_SERVER_DID_KEY_PATH=/pds/config/server-key.json
 export LOG_LEVEL=${LOG_LEVEL:-info}
 
 # Start the PDS service
