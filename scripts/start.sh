@@ -2,9 +2,14 @@
 
 set -e
 
-# Create data directories if they don't exist
-mkdir -p /pds/data
-mkdir -p /pds/config
+# Debug information
+echo "Current directory: $(pwd)"
+echo "Listing /pds directory:"
+ls -la /pds || echo "Directory /pds does not exist or is not accessible"
+
+# Create directories if they don't exist
+mkdir -p /pds/data /pds/config
+chmod 755 /pds /pds/data /pds/config
 
 # Generate environment file if it doesn't exist
 if [ ! -f /pds/pds.env ]; then
@@ -33,8 +38,18 @@ PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL:-}
 PDS_EMAIL_FROM_ADDRESS=${PDS_EMAIL_FROM_ADDRESS:-}
 LOG_LEVEL=${LOG_LEVEL:-info}
 EOF
+
+  # Ensure the file has proper permissions
+  chmod 644 /pds/pds.env
+  
+  # Verify the file was created
+  echo "Environment file created:"
+  ls -la /pds/pds.env || echo "Failed to create environment file"
+  echo "Environment file contents:"
+  cat /pds/pds.env || echo "Failed to read environment file"
 fi
 
 # Start the PDS service
 echo "Starting PDS service..."
+echo "Running: node /app/index.js --env-file=/pds/pds.env"
 exec node /app/index.js --env-file=/pds/pds.env
