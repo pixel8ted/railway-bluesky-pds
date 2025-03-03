@@ -55,25 +55,30 @@ fi
 echo "Running pds key generation script..."
 node /app/scripts/generate-keys.js
 
-# Export environment variables directly
-export PDS_HOSTNAME=${PDS_HOSTNAME}
-export PDS_JWT_SECRET=${PDS_JWT_SECRET:-$(grep PDS_JWT_SECRET /pds/pds.env | cut -d= -f2)}
-export PDS_ADMIN_PASSWORD=${PDS_ADMIN_PASSWORD:-$(grep PDS_ADMIN_PASSWORD /pds/pds.env | cut -d= -f2)}
-export PDS_DATA_DIRECTORY=/pds/data
-export PDS_BLOBSTORE_DISK_LOCATION=/pds/data/blobs
-export PDS_BLOBSTORE_DISK_TMP_LOCATION=/pds/data/blobs-temp
-export PDS_DID_PLC_URL=${PDS_DID_PLC_URL:-https://plc.directory}
-export PDS_REPORT_SERVICE=${PDS_REPORT_SERVICE:-https://mod.bsky.app}
-export PDS_CRAWLERS=${PDS_CRAWLERS:-https://relay.bsky.network}
-export PDS_HANDLE_RESOLVER=${PDS_HANDLE_RESOLVER:-https://handle.bsky.network}
-export PDS_INVITE_REQUIRED=${PDS_INVITE_REQUIRED:-true}
-export PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL:-}
-export PDS_EMAIL_FROM_ADDRESS=${PDS_EMAIL_FROM_ADDRESS:-}
-export PDS_PLC_ROTATION_KEY_PATH=/pds/config/plc-rotation-key.json
-export PDS_SERVER_DID_KEY_PATH=/pds/config/server-key.json
-export LOG_LEVEL=${LOG_LEVEL:-info}
+# Source the environment file created by the key generation script
+if [ -f "/.env" ]; then
+  echo "Sourcing environment variables from /.env"
+  . /.env
+fi
 
-# Start the PDS service
+# Start the PDS service with explicit environment variables
 echo "Starting PDS service..."
 echo "Running: node /app/index.js"
-exec node /app/index.js
+exec env \
+  PDS_HOSTNAME="${PDS_HOSTNAME}" \
+  PDS_JWT_SECRET="${PDS_JWT_SECRET:-$(grep PDS_JWT_SECRET /pds/pds.env | cut -d= -f2)}" \
+  PDS_ADMIN_PASSWORD="${PDS_ADMIN_PASSWORD:-$(grep PDS_ADMIN_PASSWORD /pds/pds.env | cut -d= -f2)}" \
+  PDS_DATA_DIRECTORY="/pds/data" \
+  PDS_BLOBSTORE_DISK_LOCATION="/pds/data/blobs" \
+  PDS_BLOBSTORE_DISK_TMP_LOCATION="/pds/data/blobs-temp" \
+  PDS_DID_PLC_URL="${PDS_DID_PLC_URL:-https://plc.directory}" \
+  PDS_REPORT_SERVICE="${PDS_REPORT_SERVICE:-https://mod.bsky.app}" \
+  PDS_CRAWLERS="${PDS_CRAWLERS:-https://relay.bsky.network}" \
+  PDS_HANDLE_RESOLVER="${PDS_HANDLE_RESOLVER:-https://handle.bsky.network}" \
+  PDS_INVITE_REQUIRED="${PDS_INVITE_REQUIRED:-true}" \
+  PDS_EMAIL_SMTP_URL="${PDS_EMAIL_SMTP_URL:-}" \
+  PDS_EMAIL_FROM_ADDRESS="${PDS_EMAIL_FROM_ADDRESS:-}" \
+  PDS_PLC_ROTATION_KEY_PATH="/pds/config/plc-rotation-key.json" \
+  PDS_SERVER_DID_KEY_PATH="/pds/config/server-key.json" \
+  LOG_LEVEL="${LOG_LEVEL:-info}" \
+  node /app/index.js
