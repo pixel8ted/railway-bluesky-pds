@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
+
 set -e
 
 # Create data directories if they don't exist
