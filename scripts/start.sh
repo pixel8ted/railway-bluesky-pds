@@ -35,8 +35,8 @@ PDS_HANDLE_RESOLVER=${PDS_HANDLE_RESOLVER:-https://handle.bsky.network}
 PDS_INVITE_REQUIRED=${PDS_INVITE_REQUIRED:-true}
 PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL:-}
 PDS_EMAIL_FROM_ADDRESS=${PDS_EMAIL_FROM_ADDRESS:-}
-PDS_PLC_ROTATION_KEY_PATH=/pds/config/plc-rotation-key.json
-PDS_SERVER_DID_KEY_PATH=/pds/config/server-key.json
+PDS_PLC_ROTATION_KEY_K=/pds/config/plc-rotation-key.json
+PDS_SERVER_DID_KEY_K=/pds/config/server-key.json
 LOG_LEVEL=${LOG_LEVEL:-info}
 EOF
 
@@ -90,7 +90,7 @@ exec env \
   PDS_INVITE_REQUIRED="${PDS_INVITE_REQUIRED:-true}" \
   PDS_EMAIL_SMTP_URL="${PDS_EMAIL_SMTP_URL:-}" \
   PDS_EMAIL_FROM_ADDRESS="${PDS_EMAIL_FROM_ADDRESS:-}" \
-  PDS_PLC_ROTATION_KEY_PATH="/pds/config/plc-rotation-key.json" \
-  PDS_SERVER_DID_KEY_PATH="/pds/config/server-key.json" \
+  PDS_PLC_ROTATION_KEY_K="/pds/config/plc-rotation-key.json" \
+  PDS_SERVER_DID_KEY_K="/pds/config/server-key.json" \
   LOG_LEVEL="${LOG_LEVEL:-info}" \
   node /app/index.js
