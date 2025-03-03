@@ -49,7 +49,23 @@ EOF
   cat /pds/pds.env || echo "Failed to read environment file"
 fi
 
+# Export environment variables directly
+export PDS_HOSTNAME=${PDS_HOSTNAME}
+export PDS_JWT_SECRET=${PDS_JWT_SECRET:-$(grep PDS_JWT_SECRET /pds/pds.env | cut -d= -f2)}
+export PDS_ADMIN_PASSWORD=${PDS_ADMIN_PASSWORD:-$(grep PDS_ADMIN_PASSWORD /pds/pds.env | cut -d= -f2)}
+export PDS_DATA_DIRECTORY=/pds/data
+export PDS_BLOBSTORE_DISK_LOCATION=/pds/data/blobs
+export PDS_BLOBSTORE_DISK_TMP_LOCATION=/pds/data/blobs-temp
+export PDS_DID_PLC_URL=${PDS_DID_PLC_URL:-https://plc.directory}
+export PDS_REPORT_SERVICE=${PDS_REPORT_SERVICE:-https://mod.bsky.app}
+export PDS_CRAWLERS=${PDS_CRAWLERS:-https://relay.bsky.network}
+export PDS_HANDLE_RESOLVER=${PDS_HANDLE_RESOLVER:-https://handle.bsky.network}
+export PDS_INVITE_REQUIRED=${PDS_INVITE_REQUIRED:-true}
+export PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL:-}
+export PDS_EMAIL_FROM_ADDRESS=${PDS_EMAIL_FROM_ADDRESS:-}
+export LOG_LEVEL=${LOG_LEVEL:-info}
+
 # Start the PDS service
 echo "Starting PDS service..."
-echo "Running: node /app/index.js --env-file=/pds/pds.env"
-exec node /app/index.js --env-file=/pds/pds.env
+echo "Running: node /app/index.js"
+exec node /app/index.js
