@@ -35,8 +35,6 @@ PDS_HANDLE_RESOLVER=${PDS_HANDLE_RESOLVER:-https://handle.bsky.network}
 PDS_INVITE_REQUIRED=${PDS_INVITE_REQUIRED:-true}
 PDS_EMAIL_SMTP_URL=${PDS_EMAIL_SMTP_URL:-}
 PDS_EMAIL_FROM_ADDRESS=${PDS_EMAIL_FROM_ADDRESS:-}
-PDS_PLC_ROTATION_KEY_K=/pds/config/plc-rotation-key.json
-PDS_SERVER_DID_KEY_K=/pds/config/server-key.json
 LOG_LEVEL=${LOG_LEVEL:-info}
 EOF
 
@@ -58,6 +56,8 @@ node /app/scripts/generate-keys.js
 if [ -f "/pds/config/plc-rotation-key.json" ]; then
   echo "PLC rotation key exists:"
   cat /pds/config/plc-rotation-key.json
+  # Extract the key content for environment variable
+  PLC_ROTATION_KEY=$(cat /pds/config/plc-rotation-key.json)
 else
   echo "ERROR: PLC rotation key file does not exist"
   exit 1
@@ -66,6 +66,8 @@ fi
 if [ -f "/pds/config/server-key.json" ]; then
   echo "Server key exists:"
   cat /pds/config/server-key.json
+  # Extract the key content for environment variable
+  SERVER_DID_KEY=$(cat /pds/config/server-key.json)
 else
   echo "ERROR: Server key file does not exist"
   exit 1
@@ -76,6 +78,7 @@ echo "Starting PDS service..."
 echo "Running: node /app/index.js"
 
 # Use the env command to set all environment variables explicitly
+# Note: We're setting the actual key content as environment variables
 exec env \
   PDS_HOSTNAME="${PDS_HOSTNAME}" \
   PDS_JWT_SECRET="${PDS_JWT_SECRET}" \
@@ -90,7 +93,7 @@ exec env \
   PDS_INVITE_REQUIRED="${PDS_INVITE_REQUIRED:-true}" \
   PDS_EMAIL_SMTP_URL="${PDS_EMAIL_SMTP_URL:-}" \
   PDS_EMAIL_FROM_ADDRESS="${PDS_EMAIL_FROM_ADDRESS:-}" \
-  PDS_PLC_ROTATION_KEY_K="/pds/config/plc-rotation-key.json" \
-  PDS_SERVER_DID_KEY_K="/pds/config/server-key.json" \
+  PDS_PLC_ROTATION_KEY="${PLC_ROTATION_KEY}" \
+  PDS_SERVER_DID_KEY="${SERVER_DID_KEY}" \
   LOG_LEVEL="${LOG_LEVEL:-info}" \
   node /app/index.js
