@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -e
 
 # Debug information
@@ -55,19 +54,32 @@ fi
 echo "Running pds key generation script..."
 node /app/scripts/generate-keys.js
 
-# Source the environment file created by the key generation script
-if [ -f "/.env" ]; then
-  echo "Sourcing environment variables from /.env"
-  . /.env
+# Check if key files exist and are readable
+if [ -f "/pds/config/plc-rotation-key.json" ]; then
+  echo "PLC rotation key exists:"
+  cat /pds/config/plc-rotation-key.json
+else
+  echo "ERROR: PLC rotation key file does not exist"
+  exit 1
+fi
+
+if [ -f "/pds/config/server-key.json" ]; then
+  echo "Server key exists:"
+  cat /pds/config/server-key.json
+else
+  echo "ERROR: Server key file does not exist"
+  exit 1
 fi
 
 # Start the PDS service with explicit environment variables
 echo "Starting PDS service..."
 echo "Running: node /app/index.js"
+
+# Use the env command to set all environment variables explicitly
 exec env \
   PDS_HOSTNAME="${PDS_HOSTNAME}" \
-  PDS_JWT_SECRET="${PDS_JWT_SECRET:-$(grep PDS_JWT_SECRET /pds/pds.env | cut -d= -f2)}" \
-  PDS_ADMIN_PASSWORD="${PDS_ADMIN_PASSWORD:-$(grep PDS_ADMIN_PASSWORD /pds/pds.env | cut -d= -f2)}" \
+  PDS_JWT_SECRET="${PDS_JWT_SECRET}" \
+  PDS_ADMIN_PASSWORD="${PDS_ADMIN_PASSWORD}" \
   PDS_DATA_DIRECTORY="/pds/data" \
   PDS_BLOBSTORE_DISK_LOCATION="/pds/data/blobs" \
   PDS_BLOBSTORE_DISK_TMP_LOCATION="/pds/data/blobs-temp" \

@@ -64,15 +64,10 @@ if (!fs.existsSync(SERVER_KEY_PATH)) {
   console.log(`Server key written to ${SERVER_KEY_PATH}`);
 }
 
-// Set environment variables
-process.env.PDS_PLC_ROTATION_KEY_PATH = PLC_KEY_PATH;
-process.env.PDS_SERVER_DID_KEY_PATH = SERVER_KEY_PATH;
-
-// Create a .env file that can be sourced by the shell
-const envFile = path.join(process.cwd(), '.env');
-fs.writeFileSync(envFile, `
-PDS_PLC_ROTATION_KEY_PATH=${PLC_KEY_PATH}
-PDS_SERVER_DID_KEY_PATH=${SERVER_KEY_PATH}
-`);
+// Print the contents of the key files for debugging
+console.log('PLC rotation key content:');
+console.log(fs.readFileSync(PLC_KEY_PATH, 'utf8'));
+console.log('Server key content:');
+console.log(fs.readFileSync(SERVER_KEY_PATH, 'utf8'));
 
 console.log('Key generation complete');
