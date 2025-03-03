@@ -1,8 +1,5 @@
 FROM ghcr.io/bluesky-social/pds:latest
 
-# Install additional tools
-RUN apt-get update && apt-get install -y curl wget
-
 # Copy scripts
 COPY scripts/start.sh /start.sh
 COPY scripts/pdsadmin-wrapper.sh /usr/local/bin/pdsadmin
